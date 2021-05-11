@@ -1,5 +1,37 @@
+
+
 .App {
-  text-align: center;
-  margin-top: 15%;
-  margin-left: 15%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+}
+
+/* @media screen and (max-width: 800px){
+  .App{flex-direction: column}
+} */
+.Grid {
+    display: grid;
+    grid-template-columns: repeat(10, 20px)
+
+}
+
+.CellTurquoise{
+  width: 20px;
+  height: 20px;
+  background-color: turquoise;
+  border: solid 1px black
+}
+
+.CellWhite{
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border: solid 1px black
+}
+
+.Button{
+  margin-top: 5px;
 }

@@ -94,15 +94,10 @@ function App() {
 
   return (
     <div className="App">
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${numCols}, 20px)`,
-        }}
-      >
+      <div className="Grid">
         {grid.map((rows, i) =>
           rows.map((col, j) => (
-            <div
+            <div className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
               key={`${i}-${j}`}
               onClick={() => {
                 const newGrid = produce(grid, (gridCopy) => {
@@ -110,17 +105,12 @@ function App() {
                 });
                 setGrid(newGrid);
               }}
-              style={{
-                width: 20,
-                height: 20,
-                backgroundColor: grid[i][j] ? "turquoise" : undefined,
-                border: "solid 1px black",
-              }}
             />
           ))
         )}
       </div>
-
+      {" "}
+<div className="Button">
       <button
         onClick={() => {
           setRunning(!running);
@@ -146,6 +136,7 @@ function App() {
       >
         Clear
       </button>
+      </div>
     </div>
   );
 }
