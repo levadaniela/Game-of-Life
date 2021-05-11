@@ -142,7 +142,10 @@ function App() {
 }
 
 export default App;
-
+//plan for tomorow:
+/* - button component;
+- grid component
+*/
 //plan:
 /*
 1. generate empty grid, provide a 3x3 
