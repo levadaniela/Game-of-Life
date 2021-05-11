@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useRef } from "react";
 import "./App.css";
-
 import produce from "immer";
 
 function App() {
@@ -19,6 +18,8 @@ function App() {
     [1, 0],
     [-1, 0],
   ];
+
+  // create empty grid with dead cells
   const createEmptyGrid = () => {
     //initialize the grid only once
     const rows = [];
@@ -27,16 +28,19 @@ function App() {
     }
     return rows;
   };
+
   const [grid, setGrid] = useState(() => {
     return createEmptyGrid();
   });
 
+  // generation of the cells
   const [running, setRunning] = useState(false);
 
   //because running is changing above but in runSImulation we use it only once, we need to create a running ref:
 
   const runningRef = useRef();
   runningRef.current = running;
+
   //create simulation, which need to run once, for this will use callback hook
   const runSimulation = useCallback(() => {
     if (!runningRef.current) {
@@ -56,8 +60,10 @@ function App() {
               //check if we go out of borders
               if (newI >= 0 && newI < numRows && newK >= 0 && newK < numCols) {
                 neighbors += g[newI][newK];
+                console.log(g[newI][newK]);
               }
             });
+
             if (neighbors < 2 || neighbors > 3) {
               // fewer than 2 and more than 3 dies
               gridCopy[i][j] = 0;
@@ -73,6 +79,8 @@ function App() {
 
     setTimeout(runSimulation, 100);
   }, []);
+
+  //create random pattern
   const randomGrid = () => {
     const rows = [];
     for (let i = 0; i < numRows; i++) {
@@ -83,6 +91,7 @@ function App() {
 
     setGrid(rows);
   };
+
   return (
     <div className="App">
       <div
@@ -128,14 +137,14 @@ function App() {
           randomGrid();
         }}
       >
-        random
+        Random
       </button>
       <button
         onClick={() => {
           setGrid(createEmptyGrid());
         }}
       >
-        clear
+        Clear
       </button>
     </div>
   );
