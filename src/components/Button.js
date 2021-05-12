@@ -1,10 +1,13 @@
-import React from "react"
+import React from "react";
 
-function Button ({ onClickFn, name }) {
-
-    return (
-        <button onClick={onClickFn}>{name}</button>
-    )
-}
+const Button = ({ onClickFn, name }) => {
+  return (
+    <div>
+      <button onClick={onClickFn} name={name}>
+        {name}
+      </button>
+    </div>
+  );
+};
 
 export default Button;

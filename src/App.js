@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useRef } from "react";
 import "./App.css";
-import produce from "immer"
-
+import produce from "immer";
+import Button from "./components/Button";
 
 // import Game from "../src/components/Game"
 
@@ -21,7 +21,6 @@ const operations = [
   [-1, 0],
 ];
 
-
 // create empty grid with dead cells
 const createEmptyGrid = () => {
   //initialize the grid only once
@@ -31,8 +30,6 @@ const createEmptyGrid = () => {
   }
   return rows;
 };
-
-
 
 // random pattern
 const randomPattern = () => {
@@ -71,14 +68,11 @@ const simulation = (grid) => {
   return gridCopy;
 };
 
-
-
 function App() {
-
   const [grid, setGrid] = useState(() => {
     return createEmptyGrid();
   });
-  
+
   const [running, setRunning] = useState(false);
 
   const runningRef = useRef(running);
@@ -89,48 +83,48 @@ function App() {
       return;
     }
 
-    setGrid( (g) => simulation(g));
-    
+    setGrid((g) => simulation(g));
+
     setTimeout(runSimulation, 100);
   }, []);
 
   return (
     <div className="App">
-      <button className="Button"
-        onClick={() => {
+      <Button
+        className="Button"
+        onClickFn={() => {
           setRunning(!running);
           if (!running) {
             runningRef.current = true;
             runSimulation();
           }
         }}
-      >
-        {running ? "stop" : "start"}
-      </button>
-      <button
-        onClick={() => {
-setGrid(randomPattern)
+        name={running ? "stop" : "start"}
+      />
+      <Button
+        className="Button"
+        onClickFn={() => {
+          setGrid(randomPattern);
         }}
-      >
-        random
-      </button>
-      <button
-        onClick={() => {
+        name={"Randomise"}
+      />
+      <Button
+        className="Button"
+        onClickFn={() => {
           setGrid(createEmptyGrid());
         }}
-      >
-        clear
-      </button>
-      <div
-className="Grid"
-      >
+        name={"Clear"}
+      />
+
+      <div className="Grid">
         {grid.map((rows, i) =>
           rows.map((col, j) => (
-            <div className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
+            <div
+              className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
               key={`${i}-${j}`}
               onClick={() => {
                 // user click
-                const newGrid = produce(grid, gridCopy => {
+                const newGrid = produce(grid, (gridCopy) => {
                   gridCopy[i][j] = grid[i][j] ? 0 : 1;
                 });
                 setGrid(newGrid);
@@ -141,8 +135,7 @@ className="Grid"
       </div>
     </div>
   );
-};
-
+}
 
 export default App;
 //plan for tomorow:
