@@ -36,49 +36,7 @@ function App() {
   // generation of the cells
   const [running, setRunning] = useState(false);
 
-  //because running is changing above but in runSImulation we use it only once, we need to create a running ref:
 
-  const runningRef = useRef();
-  runningRef.current = running;
-
-  //create simulation, which need to run once, for this will use callback hook
-  const runSimulation = useCallback(() => {
-    if (!runningRef.current) {
-      return;
-    }
-
-    setGrid((g) => {
-      // g - current grid; produce creeate a new grid and update the setGrid
-      return produce(g, (gridCopy) => {
-        for (let i = 0; i < numRows; i++) {
-          for (let j = 0; j < numCols; j++) {
-            // computes neighbors
-            let neighbors = 0;
-            availableMoves.forEach(([x, y]) => {
-              const newI = i + x;
-              const newK = j + y;
-              //check if we go out of borders
-              if (newI >= 0 && newI < numRows && newK >= 0 && newK < numCols) {
-                neighbors += g[newI][newK];
-                console.log(g[newI][newK]);
-              }
-            });
-
-            if (neighbors < 2 || neighbors > 3) {
-              // fewer than 2 and more than 3 dies
-              gridCopy[i][j] = 0;
-            } else if (g[i][j] === 0 && neighbors === 3) {
-              // dead cell with 3 neighbours becomes alive
-              gridCopy[i][j] = 1;
-            }
-          }
-        }
-      });
-    });
-    // simulate
-
-    setTimeout(runSimulation, 100);
-  }, []);
 
   //create random pattern
   const randomGrid = () => {
