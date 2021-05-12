@@ -1,75 +1,102 @@
 import React, { useCallback, useState, useRef } from "react";
 import "./App.css";
-import produce from "immer";
+import produce from "immer"
+
+
+// import Game from "../src/components/Game"
+
+// Globals
+const numRows = 10;
+const numCols = 10;
+
+// Operations
+const operations = [
+  [0, 1],
+  [0, -1],
+  [1, -1],
+  [-1, 1],
+  [1, 1],
+  [-1, -1],
+  [1, 0],
+  [-1, 0],
+];
+
+
+// create empty grid with dead cells
+const createEmptyGrid = () => {
+  //initialize the grid only once
+  const rows = [];
+  for (let i = 0; i < numRows; i++) {
+    rows.push(Array.from(Array(numCols), () => 0));
+  }
+  return rows;
+};
+
+
+
+// random pattern
+const randomPattern = () => {
+  const grid = [];
+  for (let i = 0; i < numRows; i++) {
+    grid.push(Array.from(Array(numCols), () => (Math.random() > 0.7 ? 1 : 0)));
+  }
+  return grid;
+};
+
+const simulation = (grid) => {
+  // Spread doesn't work here. Clone multidimensional array
+  let gridCopy = JSON.parse(JSON.stringify(grid));
+  for (let i = 0; i < numRows; i++) {
+    for (let j = 0; j < numCols; j++) {
+      // computes neighbors
+      let neighbors = 0;
+      operations.forEach(([x, y]) => {
+        const newI = i + x;
+        const newJ = j + y;
+        // check bounds
+        if (newI >= 0 && newI < numRows && newJ >= 0 && newJ < numCols) {
+          neighbors += grid[newI][newJ];
+        }
+      });
+
+      if (neighbors < 2 || neighbors > 3) {
+        // fewer than 2 and more than 3 dies
+        gridCopy[i][j] = 0;
+      } else if (grid[i][j] === 0 && neighbors === 3) {
+        // dead cell with 3 neighbours becomes alive
+        gridCopy[i][j] = 1;
+      }
+    }
+  }
+  return gridCopy;
+};
+
+
 
 function App() {
-  //default rows and coloumns for our grid
-  const numRows = 10;
-  const numCols = 10;
-
-  //possible moves with neigbors
-  const availableMoves = [
-    [0, 1],
-    [0, -1],
-    [1, -1],
-    [-1, 1],
-    [1, 1],
-    [-1, -1],
-    [1, 0],
-    [-1, 0],
-  ];
-
-  // create empty grid with dead cells
-  const createEmptyGrid = () => {
-    //initialize the grid only once
-    const rows = [];
-    for (let i = 0; i < numRows; i++) {
-      rows.push(Array.from(Array(numCols), () => 0));
-    }
-    return rows;
-  };
 
   const [grid, setGrid] = useState(() => {
     return createEmptyGrid();
   });
-
-  // generation of the cells
+  
   const [running, setRunning] = useState(false);
 
+  const runningRef = useRef(running);
+  runningRef.current = running;
 
-
-  //create random pattern
-  const randomGrid = () => {
-    const rows = [];
-    for (let i = 0; i < numRows; i++) {
-      rows.push(
-        Array.from(Array(numCols), () => (Math.random() > 0.7 ? 1 : 0))
-      );
+  const runSimulation = useCallback(() => {
+    if (!runningRef.current) {
+      return;
     }
 
-    setGrid(rows);
-  };
+    setGrid( (g) => simulation(g));
+    
+    setTimeout(runSimulation, 100);
+  }, []);
 
   return (
     <div className="App">
-      <div className="Grid">
-        {grid.map((rows, i) =>
-          rows.map((col, j) => (
-            <div className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
-              key={`${i}-${j}`}
-              onClick={() => {
-                const newGrid = produce(grid, (gridCopy) => {
-                  gridCopy[i][j] = grid[i][j] ? 0 : 1;
-                });
-                setGrid(newGrid);
-              }}
-            />
-          ))
-        )}
-      </div>
-      {" "}
-<div className="Button">
-      <button
+      <button className="Button"
         onClick={() => {
           setRunning(!running);
           if (!running) {
@@ -78,26 +105,44 @@ function App() {
           }
         }}
       >
-        {running ? "Stop" : "Start"}
+        {running ? "stop" : "start"}
       </button>
       <button
         onClick={() => {
-          randomGrid();
+setGrid(randomPattern)
         }}
       >
-        Random
+        random
       </button>
       <button
         onClick={() => {
           setGrid(createEmptyGrid());
         }}
       >
-        Clear
+        clear
       </button>
+      <div
+className="Grid"
+      >
+        {grid.map((rows, i) =>
+          rows.map((col, j) => (
+            <div className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
+              key={`${i}-${j}`}
+              onClick={() => {
+                // user click
+                const newGrid = produce(grid, gridCopy => {
+                  gridCopy[i][j] = grid[i][j] ? 0 : 1;
+                });
+                setGrid(newGrid);
+              }}
+            />
+          ))
+        )}
       </div>
     </div>
   );
-}
+};
+
 
 export default App;
 //plan for tomorow:
