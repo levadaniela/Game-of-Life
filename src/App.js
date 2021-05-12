@@ -2,6 +2,8 @@ import React, { useCallback, useState, useRef } from "react";
 import "./App.css";
 import produce from "immer";
 import Button from "./components/Button";
+import Wrapper from "./components/Wrapper";
+import Grid from "./components/Grid";
 
 
 import { CreateEmptyGrid, RandomPattern, Simulation } from "./components/LogicofGame"
@@ -31,15 +33,38 @@ function App() {
     }
   }
   return (
-    <div className="App">
-    <h1> Welcome to Hajoo&Dana's version of GameOfLife</h1>
-      
 
-      <div className="Grid">
+    <Wrapper>
+      <Button
+        onClickFn={() => {
+          setRunning(!running);
+          if (!running) {
+            runningRef.current = true;
+            runSimulation();
+          }
+        }}
+        name={running ? "Stop" : "start"}
+      />
+      <Button
+        onClickFn={() => {
+          setGrid(randomPattern);
+        }}
+        name={"Randomise"}
+      />
+      <Button
+        onClickFn={() => {
+          setGrid(createEmptyGrid());
+        }}
+        name={"Clear"}
+      />
+      <Grid>
+
+    <h1> Welcome to Hajoo&Dana's version of GameOfLife</h1>
+
         {grid.map((rows, i) =>
           rows.map((col, j) => (
             <div
-              className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
+              // className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
               key={`${i}-${j}`}
               onClick={() => {
                 // user click
@@ -51,29 +76,10 @@ function App() {
             />
           ))
         )}
-      </div>
-      <Button
-        className="Button"
-        onClickFn={
-          stopStartFn
-        }
-        name={running ? "Stop" : "Start"}
-      />
-      <Button
-        className="Button"
-        onClickFn={() => {
-          setGrid(RandomPattern);
-        }}
-        name={"Randomise"}
-      />
-      <Button
-        className="Button"
-        onClickFn={() => {
-          setGrid(CreateEmptyGrid());
-        }}
-        name={"Clear"}
-      />
-    </div>
+
+      </Grid>
+    </Wrapper>
+
   );
 }
 
