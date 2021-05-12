@@ -1,7 +1,7 @@
-import React, {useState} from "react";
+import React from "react";
 
 
-function Grid () {
+function Grid (grid) {
   
 //default rows and coloumns for our grid
 const numRows = 10;
@@ -17,9 +17,6 @@ const numCols = 10;
     return rows;
   };
 
-  const [grid, setGrid] = useState(() => {
-    return createEmptyGrid();
-  });
 
   return (
 <div className="Grid">

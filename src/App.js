@@ -3,78 +3,15 @@ import "./App.css";
 import produce from "immer";
 import Button from "./components/Button";
 
-// import Game from "../src/components/Game"
 
-// Globals
-const numRows = 10;
-const numCols = 10;
-
-// Operations
-const operations = [
-  [0, 1],
-  [0, -1],
-  [1, -1],
-  [-1, 1],
-  [1, 1],
-  [-1, -1],
-  [1, 0],
-  [-1, 0],
-];
-
-// create empty grid with dead cells
-const createEmptyGrid = () => {
-  //initialize the grid only once
-  const rows = [];
-  for (let i = 0; i < numRows; i++) {
-    rows.push(Array.from(Array(numCols), () => 0));
-  }
-  return rows;
-};
-
-// random pattern
-const randomPattern = () => {
-  const grid = [];
-  for (let i = 0; i < numRows; i++) {
-    grid.push(Array.from(Array(numCols), () => (Math.random() > 0.7 ? 1 : 0)));
-  }
-  return grid;
-};
-
-const simulation = (grid) => {
-  // Spread doesn't work here. Clone multidimensional array
-  let gridCopy = JSON.parse(JSON.stringify(grid));
-  for (let i = 0; i < numRows; i++) {
-    for (let j = 0; j < numCols; j++) {
-      // computes neighbors
-      let neighbors = 0;
-      operations.forEach(([x, y]) => {
-        const newI = i + x;
-        const newJ = j + y;
-        // check bounds
-        if (newI >= 0 && newI < numRows && newJ >= 0 && newJ < numCols) {
-          neighbors += grid[newI][newJ];
-        }
-      });
-
-      if (neighbors < 2 || neighbors > 3) {
-        // fewer than 2 and more than 3 dies
-        gridCopy[i][j] = 0;
-      } else if (grid[i][j] === 0 && neighbors === 3) {
-        // dead cell with 3 neighbours becomes alive
-        gridCopy[i][j] = 1;
-      }
-    }
-  }
-  return gridCopy;
-};
+import { CreateEmptyGrid, RandomPattern, Simulation } from "./components/LogicofGame"
 
 function App() {
-  const [grid, setGrid] = useState(() => {
-    return createEmptyGrid();
-  });
+  const [grid, setGrid] = useState(CreateEmptyGrid());
 
   const [running, setRunning] = useState(false);
 
+  //generation of the cell
   const runningRef = useRef(running);
   runningRef.current = running;
 
@@ -82,39 +19,21 @@ function App() {
     if (!runningRef.current) {
       return;
     }
-
-    setGrid((g) => simulation(g));
-
+    setGrid((g) => Simulation(g));
     setTimeout(runSimulation, 100);
   }, []);
 
+  const stopStartFn = () => {
+    setRunning(!running);
+    if (!running) {
+      runningRef.current = true;
+      runSimulation();
+    }
+  }
   return (
     <div className="App">
-      <Button
-        className="Button"
-        onClickFn={() => {
-          setRunning(!running);
-          if (!running) {
-            runningRef.current = true;
-            runSimulation();
-          }
-        }}
-        name={running ? "stop" : "start"}
-      />
-      <Button
-        className="Button"
-        onClickFn={() => {
-          setGrid(randomPattern);
-        }}
-        name={"Randomise"}
-      />
-      <Button
-        className="Button"
-        onClickFn={() => {
-          setGrid(createEmptyGrid());
-        }}
-        name={"Clear"}
-      />
+    <h1> Welcome to Hajoo&Dana's version of GameOfLife</h1>
+      
 
       <div className="Grid">
         {grid.map((rows, i) =>
@@ -133,22 +52,29 @@ function App() {
           ))
         )}
       </div>
+      <Button
+        className="Button"
+        onClickFn={
+          stopStartFn
+        }
+        name={running ? "Stop" : "Start"}
+      />
+      <Button
+        className="Button"
+        onClickFn={() => {
+          setGrid(RandomPattern);
+        }}
+        name={"Randomise"}
+      />
+      <Button
+        className="Button"
+        onClickFn={() => {
+          setGrid(CreateEmptyGrid());
+        }}
+        name={"Clear"}
+      />
     </div>
   );
 }
 
 export default App;
-//plan for tomorow:
-/* - button component;
-- grid component
-*/
-//plan:
-/*
-1. generate empty grid, provide a 3x3 
-2. Randomise the live cells with Random button 
-3. a new button to play and implement the 4 rules
-*/
-
-/* MLP
-2. user can click random cells (making them alive from dead)
-*/
