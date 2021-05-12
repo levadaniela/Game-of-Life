@@ -2,6 +2,8 @@ import React, { useCallback, useState, useRef } from "react";
 import "./App.css";
 import produce from "immer";
 import Button from "./components/Button";
+import Wrapper from "./components/Wrapper";
+import Grid from "./components/Grid";
 
 // import Game from "../src/components/Game"
 
@@ -89,9 +91,8 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
+    <Wrapper>
       <Button
-        className="Button"
         onClickFn={() => {
           setRunning(!running);
           if (!running) {
@@ -99,28 +100,25 @@ function App() {
             runSimulation();
           }
         }}
-        name={running ? "stop" : "start"}
+        name={running ? "Stop" : "start"}
       />
       <Button
-        className="Button"
         onClickFn={() => {
           setGrid(randomPattern);
         }}
         name={"Randomise"}
       />
       <Button
-        className="Button"
         onClickFn={() => {
           setGrid(createEmptyGrid());
         }}
         name={"Clear"}
       />
-
-      <div className="Grid">
+      <Grid>
         {grid.map((rows, i) =>
           rows.map((col, j) => (
             <div
-              className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
+              // className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
               key={`${i}-${j}`}
               onClick={() => {
                 // user click
@@ -132,8 +130,8 @@ function App() {
             />
           ))
         )}
-      </div>
-    </div>
+      </Grid>
+    </Wrapper>
   );
 }
 
