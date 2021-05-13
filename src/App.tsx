@@ -1,25 +1,12 @@
 import React, { useCallback, useState, useRef } from "react";
-import styled from "styled-components";
+
 import "./App.css"
 import produce from "immer";
 
 import { CreateEmptyGrid, RandomPattern, Simulation } from "./components/LogicofGame"
 import Button from "./components/Button";
 import Wrapper from "./elements/Wrapper";
-// import Grid from "./elements/Grid";
-
-// const Grid = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(10, 20px);
-// `;
-
-// const Cells = styled.div`
-//  width: 20px;
-//   height: 20px;
-//   border: solid 1px black;
-//   background-color: ${(props) => (props.true ? "turquoise" : "white")}; 
-// `;
-
+import { Grid, Cells } from "./elements/Grid";
 
 
 
@@ -47,27 +34,31 @@ function App() {
       runSimulation();
     }
   }
-  return (
-
-    <Wrapper>
-        <h1> Welcome to Hajoo&Dana's version of GameOfLife</h1>
-      <div className="Grid">
-        {grid.map((rows, i) =>
-          rows.map((col, j) => (
-            <div 
-              className={grid[i][j] ? "CellTurquoise" : "CellWhite"}
-              key={`${i}-${j}`}
-              onClick={() => {
+  const handleUserInput = (i:number, j:number): void => {
                 // user click
                 const newGrid = produce(grid, (gridCopy) => {
                   gridCopy[i][j] = grid[i][j] ? 0 : 1;
                 });
                 setGrid(newGrid);
+  }
+  return (
+
+    <Wrapper>
+        <h1> Welcome to Hajoo&Dana's version of GameOfLife</h1>
+      <Grid>
+        {grid.map((rows, i) =>
+          rows.map((col, j) => (
+            <Cells 
+              live = {grid[i][j] === 1}  
+              key={`${i}-${j}`}
+              onClick={() => {
+              handleUserInput(i,j)
               }}
             />
           ))
         )}
-      </div>
+      </Grid>
+      <div style={{display:"grid", columnGap: "10px", gridTemplateColumns: "repeat (3)"}}>
       <Button
         onClickFn={() => {
           stopStartFn()
@@ -86,9 +77,14 @@ function App() {
         }}
         name={"Clear"}
       />
+      </div>
     </Wrapper>
 
   );
 }
 
 export default App;
+
+// when no cell - continue to run;
+// when we have static pattern it ontinue to run;
+//after we press clear same 

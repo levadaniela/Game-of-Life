@@ -1,4 +1,5 @@
-import React from "react"
+
+type GridType = (0 | 1)[][] 
 
 // Globals
 const numRows = 10;
@@ -17,9 +18,9 @@ const operations = [
 ];
 
 // // create empty grid with dead cells
-export function CreateEmptyGrid() {
+export function CreateEmptyGrid() : GridType {
   //initialize the grid only once
-  const rows = [];
+  const rows: GridType = [];
   for (let i = 0; i < numRows; i++) {
     rows.push(Array.from(Array(numCols), () => 0));
   }
@@ -27,7 +28,7 @@ export function CreateEmptyGrid() {
 };
 
 // random pattern
-export function RandomPattern() {
+export function RandomPattern() : GridType {
   const grid = [];
   for (let i = 0; i < numRows; i++) {
     grid.push(Array.from(Array(numCols), () => (Math.random() > 0.7 ? 1 : 0)));
@@ -35,9 +36,9 @@ export function RandomPattern() {
   return grid;
 };
 
-export function Simulation(grid){
+export function Simulation(grid: GridType): GridType{
   // Spread doesn't work here. Clone multidimensional array
-  let gridCopy = JSON.parse(JSON.stringify(grid));
+  const gridCopy = CreateEmptyGrid();
   for (let i = 0; i < numRows; i++) {
     for (let j = 0; j < numCols; j++) {
       // computes neighbors
